@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:io';
+import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -191,6 +192,10 @@ class _ChatMessagesViewState extends State<ChatMessagesView> {
                   _voiceBubblePressed(msg);
                 } else if (msg.body.type == MessageType.IMAGE) {
                   _imageBubblePressed(msg);
+                } else if (msg.body.type == MessageType.FILE) {
+                  ChatFileMessageBody body = msg.body as ChatFileMessageBody;
+                  // _openFile(body);
+                  OpenFilex.open(body.localPath);
                 }
               }
               return ret;
@@ -204,7 +209,7 @@ class _ChatMessagesViewState extends State<ChatMessagesView> {
               _focusNode.unfocus();
               bool ret = widget.onBubbleLongPress?.call(ctx, msg) ?? false;
               if (!ret) {
-                longPressAction(msg);
+                longPressAction(msg, context, widget.messageListViewController);
               }
               return ret;
             },
@@ -279,47 +284,6 @@ class _ChatMessagesViewState extends State<ChatMessagesView> {
     return content;
   }
 
-  void longPressAction(ChatMessage message) async {
-    List<ChatBottomSheetItem> list = [];
-    if (message.body.type == MessageType.TXT) {
-      list.add(
-        ChatBottomSheetItem.normal(
-          AppLocalizations.of(context)?.uikitCopy ?? 'Copy',
-          onTap: () async {
-            ChatTextMessageBody body = message.body as ChatTextMessageBody;
-            Clipboard.setData(ClipboardData(text: body.content));
-            return Navigator.of(context).pop();
-          },
-        ),
-      );
-    }
-    list.add(
-      ChatBottomSheetItem.normal(
-        AppLocalizations.of(context)?.uikitDelete ?? 'Delete',
-        onTap: () async {
-          widget.messageListViewController.removeMessage(message);
-          return Navigator.of(context).pop();
-        },
-      ),
-    );
-
-    var time = DateTime.now().millisecondsSinceEpoch - message.serverTime;
-
-    if (time < 120 * 1000 && message.direction != MessageDirection.RECEIVE) {
-      list.add(
-        ChatBottomSheetItem.destructive(
-          AppLocalizations.of(context)?.uikitRecall ?? 'Recall',
-          onTap: () async {
-            widget.messageListViewController.recallMessage(message);
-            Navigator.of(context).pop();
-          },
-        ),
-      );
-    }
-
-    showChatBottomSheet(context: context, items: list);
-  }
-
   void showMoreItems() {
     List<ChatBottomSheetItem> currentList = widget.moreItems ?? _moreItems();
     if (widget.inputBarMoreActionsOnTap != null) {
@@ -351,7 +315,52 @@ class _ChatMessagesViewState extends State<ChatMessagesView> {
         Navigator.of(context).pop();
         _openFilePicker();
       }),
+      ChatBottomSheetItem.normal(
+          AppLocalizations.of(context)?.uikitVideo ?? 'Video', onTap: () async {
+        Navigator.of(context).pop();
+        _sendVideoMessage();
+      }),
     ];
+  }
+
+  void _sendVideoMessage() async {
+    final XFile? video =
+        await ImagePicker().pickVideo(source: ImageSource.gallery);
+    if (video != null) {
+      final imageData = await VideoThumbnail.thumbnailData(
+        video: video.path,
+        imageFormat: ImageFormat.JPEG,
+        maxWidth:
+            200, // specify the width of the thumbnail, let the height auto-scaled to keep the source aspect ratio
+        quality: 80,
+      );
+      if (imageData != null) {
+        final directory = await getApplicationCacheDirectory();
+        String thumbnailPath =
+            '${directory.path}/thumbnail_${Random().nextInt(999999999)}.jpeg';
+        final file = File(thumbnailPath);
+        file.writeAsBytesSync(imageData);
+
+        final videoFile = File(video.path);
+
+        Image.file(file)
+            .image
+            .resolve(const ImageConfiguration())
+            .addListener(ImageStreamListener((info, synchronousCall) {
+          final msg = ChatMessage.createVideoSendMessage(
+            targetId: widget.messageListViewController.conversation.id,
+            filePath: video.path,
+            thumbnailLocalPath: file.path,
+            chatType: ChatType.values[
+                widget.messageListViewController.conversation.type.index],
+            width: info.image.width.toDouble(),
+            height: info.image.height.toDouble(),
+            fileSize: videoFile.sizeInBytes,
+          );
+          widget.messageListViewController.sendMessage(msg);
+        }));
+      }
+    }
   }
 
   void _openFilePicker() async {
@@ -465,14 +474,9 @@ class _ChatMessagesViewState extends State<ChatMessagesView> {
     widget.messageListViewController.refreshUI();
     ChatVoiceMessageBody body = message.body as ChatVoiceMessageBody;
     await _player.stop();
-    await _player
-        .play(DeviceFileSource(body.localPath))
-        .onError((error, stackTrace) => {});
-    _player.onPlayerComplete.first.whenComplete(() {
-      if (_playingMessage != null) {
-        _stopVoice();
-      }
-    }).onError((error, stackTrace) {});
+    await _player.setFilePath(body.localPath).onError((error, stackTrace) {});
+
+    await _player.play().whenComplete(() => _stopVoice());
   }
 
   Future<void> _stopVoice() async {
@@ -603,6 +607,11 @@ class _ChatMessagesViewState extends State<ChatMessagesView> {
     return null;
   }
 
+  Future<void> _openFile(ChatFileMessageBody body) {
+    OpenFilex.open(body.localPath);
+    return Future.value();
+  }
+
   // Future<void> getAmplitude() async {
   //   Future.doWhile(() {
   //     return fetchA();
@@ -616,4 +625,49 @@ class _ChatMessagesViewState extends State<ChatMessagesView> {
   //       "amplitude:${amplitude.current}, max:${amplitude.max}, dL:${amplitude.current / amplitude.max}");
   //   return _recordBtnTouchDown;
   // }
+}
+
+void longPressAction(
+  ChatMessage message,
+  BuildContext context,
+  ChatMessageListController messageListViewController,
+) async {
+  List<ChatBottomSheetItem> list = [];
+  if (message.body.type == MessageType.TXT) {
+    list.add(
+      ChatBottomSheetItem.normal(
+        AppLocalizations.of(context)?.uikitCopy ?? 'Copy',
+        onTap: () async {
+          ChatTextMessageBody body = message.body as ChatTextMessageBody;
+          Clipboard.setData(ClipboardData(text: body.content));
+          return Navigator.of(context).pop();
+        },
+      ),
+    );
+  }
+  list.add(
+    ChatBottomSheetItem.normal(
+      AppLocalizations.of(context)?.uikitDelete ?? 'Delete',
+      onTap: () async {
+        messageListViewController.removeMessage(message);
+        return Navigator.of(context).pop();
+      },
+    ),
+  );
+
+  var time = DateTime.now().millisecondsSinceEpoch - message.serverTime;
+
+  if (time < 120 * 1000 && message.direction != MessageDirection.RECEIVE) {
+    list.add(
+      ChatBottomSheetItem.destructive(
+        AppLocalizations.of(context)?.uikitRecall ?? 'Unsend',
+        onTap: () async {
+          messageListViewController.recallMessage(message);
+          Navigator.of(context).pop();
+        },
+      ),
+    );
+  }
+
+  showChatBottomSheet(context: context, items: list);
 }

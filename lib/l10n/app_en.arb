@@ -17,6 +17,6 @@
   "releaseToCancel": "Release to Cancel",
   "uikitCopy": "Copy",
   "uikitDelete": "Delete",
-  "uikitRecall": "Recall",
+  "uikitRecall": "Unsend",
   "uikitSend": "Send"
 }

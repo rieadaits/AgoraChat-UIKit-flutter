@@ -5,9 +5,9 @@ import 'package:example/messages_page.dart';
 import 'package:flutter/material.dart';
 
 class ChatConfig {
-  static const String appKey = "";
-  static const String userId = "";
-  static const String agoraToken = '';
+  static const String appKey = "app-key";
+  static String userId = "user-id";
+  static String agoraToken = "agora-token";
 }
 
 void main() async {
@@ -69,8 +69,8 @@ class _MyHomePageState extends State<MyHomePage> {
           mainAxisSize: MainAxisSize.max,
           children: [
             const SizedBox(height: 10),
-            const Text("login userId: ${ChatConfig.userId}"),
-            const Text("agoraToken: ${ChatConfig.agoraToken}"),
+            Text("login userId: ${ChatConfig.userId}"),
+            Text("agoraToken: ${ChatConfig.agoraToken}"),
             const SizedBox(height: 10),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,

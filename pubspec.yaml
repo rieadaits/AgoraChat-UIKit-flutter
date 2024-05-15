@@ -23,9 +23,15 @@ dependencies:
 
   record: ^4.4.4
 
-  audioplayers: ^5.2.0
+  open_filex: ^4.4.0
+
+  just_audio: ^0.9.37
 
   agora_chat_sdk: ^1.1.1
+
+  video_thumbnail: ^0.5.3
+
+  path_provider: ^2.1.1
 
 dev_dependencies:
   flutter_test:

@@ -1,12 +1,9 @@
 import 'dart:io';
 import 'dart:math';
 
+import 'package:agora_chat_uikit/agora_chat_uikit.dart';
 import 'package:example/custom_video_message/play_video_page.dart';
 import 'package:flutter/material.dart';
-import 'package:agora_chat_uikit/agora_chat_uikit.dart';
-
-import 'package:path_provider/path_provider.dart';
-import 'package:video_thumbnail/video_thumbnail.dart';
 
 import 'chat_message_list_video_item.dart';
 
@@ -61,41 +58,24 @@ class _CustomMessagesPageState extends State<CustomMessagesPage> {
             if (model.message.body.type == MessageType.VIDEO) {
               return ChatMessageListVideoItem(
                 model: model,
+                onBubbleLongPress: (context, msg) {
+                  longPressAction(msg, context, controller);
+                  return true;
+                },
                 onPlayTap: playVideo,
               );
             }
             return null;
           },
-          onTap: (context, message) {
-            bool hold = false;
-            switch (message.body.type) {
-              case MessageType.FILE:
-                showSnackBar('file msg clicked');
-                hold = true;
-                break;
-              case MessageType.LOCATION:
-                showSnackBar('location msg clicked');
-                hold = true;
-                break;
-              case MessageType.VIDEO:
-                showSnackBar('video msg clicked');
-                hold = true;
-                break;
-
-              default:
-                break;
-            }
-
-            return hold;
-          },
           inputBarMoreActionsOnTap: (items) {
-            return items +
-                [
-                  ChatBottomSheetItem.normal('Video', onTap: () async {
-                    Navigator.of(context).pop();
-                    sendVideoMessage();
-                  }),
-                ];
+            return items;
+            // return items +
+            //     [
+            //       ChatBottomSheetItem.normal('Video', onTap: () async {
+            //         Navigator.of(context).pop();
+            //         sendVideoMessage();
+            //       }),
+            //     ];
           },
         ),
       ),
