@@ -162,9 +162,7 @@ class _ChatMessagesViewState extends State<ChatMessagesView> {
   void didUpdateWidget(covariant ChatMessagesView oldWidget) {
     if (widget != oldWidget) {
       _stopRecord(false);
-      if (_player.playing) {
-        _stopVoice();
-      }
+      _stopVoice();
     }
 
     super.didUpdateWidget(oldWidget);
@@ -475,9 +473,7 @@ class _ChatMessagesViewState extends State<ChatMessagesView> {
     widget.messageListViewController.play(message);
     widget.messageListViewController.refreshUI();
     ChatVoiceMessageBody body = message.body as ChatVoiceMessageBody;
-    if (_player.playing) {
-      await _player.stop();
-    }
+    await _player.stop();
     await _player.setFilePath(body.localPath).onError((error, stackTrace) {
       return null;
     });
