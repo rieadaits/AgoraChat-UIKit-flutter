@@ -27,6 +27,16 @@ class _ConversationsPageState extends State<ConversationsPage> {
             ),
           );
         },
+        avatarBuilder: (context, conversation) {
+          return Container(
+            width: 40,
+            height: 40,
+            decoration: BoxDecoration(
+              color: Colors.cyan,
+              shape: BoxShape.circle,
+            ),
+          );
+        },
       ),
     );
   }

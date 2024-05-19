@@ -54,6 +54,23 @@ class _CustomMessagesPageState extends State<CustomMessagesPage> {
           onError: (error) {
             showSnackBar('error: ${error.description}');
           },
+          onTap: (context, message) {
+            if (message.body.type == MessageType.FILE) {
+              ChatFileMessageBody body = message.body as ChatFileMessageBody;
+              OpenFilex.open(body.localPath);
+              print("${body.localPath}");
+            }
+            if (message.body.type == MessageType.VOICE) {
+              ChatVoiceMessageBody body = message.body as ChatVoiceMessageBody;
+              print("${body.localPath}");
+            }
+            if (message.body.type == MessageType.IMAGE) {
+              ChatImageMessageBody body = message.body as ChatImageMessageBody;
+              print("${body.localPath}");
+            }
+
+            return false;
+          },
           itemBuilder: (context, model) {
             if (model.message.body.type == MessageType.VIDEO) {
               return ChatMessageListVideoItem(

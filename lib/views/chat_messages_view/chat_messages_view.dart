@@ -194,8 +194,8 @@ class _ChatMessagesViewState extends State<ChatMessagesView> {
                   _imageBubblePressed(msg);
                 } else if (msg.body.type == MessageType.FILE) {
                   ChatFileMessageBody body = msg.body as ChatFileMessageBody;
-                  // _openFile(body);
-                  OpenFilex.open(body.localPath);
+                  _fileBubblePressed(msg);
+                  // OpenFilex.open(body.localPath);
                 }
               }
               return ret;
@@ -310,11 +310,14 @@ class _ChatMessagesViewState extends State<ChatMessagesView> {
         Navigator.of(context).pop();
         _openImagePicker();
       }),
-      ChatBottomSheetItem.normal(
-          AppLocalizations.of(context)?.uikitFiles ?? 'Files', onTap: () async {
-        Navigator.of(context).pop();
-        _openFilePicker();
-      }),
+
+      //TODO: This Sections Need RND for The Local File System
+      // ChatBottomSheetItem.normal(
+      //     AppLocalizations.of(context)?.uikitFiles ?? 'Files', onTap: () async {
+      //   Navigator.of(context).pop();
+      //   _openFilePicker();
+      // }),
+
       ChatBottomSheetItem.normal(
           AppLocalizations.of(context)?.uikitVideo ?? 'Video', onTap: () async {
         Navigator.of(context).pop();
@@ -446,6 +449,16 @@ class _ChatMessagesViewState extends State<ChatMessagesView> {
     );
     widget.messageListViewController
         .sendMessage(widget.willSendMessage?.call(msg) ?? msg);
+  }
+
+  Future<void> _fileBubblePressed(ChatMessage message) async {
+    await widget.conversation.markMessageAsRead(message.msgId);
+    message.hasRead = true;
+
+    final body = message.body as ChatFileMessageBody;
+
+    OpenFilex.open(body.localPath);
+    return Future.value();
   }
 
   Future<void> _voiceBubblePressed(ChatMessage message) async {
@@ -607,11 +620,6 @@ class _ChatMessagesViewState extends State<ChatMessagesView> {
     //   return null;
     // }
     return null;
-  }
-
-  Future<void> _openFile(ChatFileMessageBody body) {
-    OpenFilex.open(body.localPath);
-    return Future.value();
   }
 
   // Future<void> getAmplitude() async {
