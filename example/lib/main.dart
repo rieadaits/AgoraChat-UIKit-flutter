@@ -5,9 +5,10 @@ import 'package:example/messages_page.dart';
 import 'package:flutter/material.dart';
 
 class ChatConfig {
-  static const String appKey = "app-key";
-  static String userId = "user-id";
-  static String agoraToken = "agora-token";
+  static String appKey = '611147007#1332714';
+  static String userId = "riead";
+  static String agoraToken =
+      "007eJxTYLC/JCnKOYXttonPo9n7+t//mDjv+nJZXuU78/TfGpuxPf2lwGBmnGRsaJFmYmqSamFiYGqRaGKSZp6cZGScbGlulpRo7PHEK60hkJHh6nIlRkYGVgZGIATxVRjMUy2NUixNDXQNDYyTdQ0NU9N0k4wtUnXNUsySUywsTIzNU4wBV4UnDg==";
 }
 
 void main() async {

@@ -15,6 +15,7 @@ class _ConversationsPageState extends State<ConversationsPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: const Text("Conversations")),
+      backgroundColor: Colors.white,
       // Conversation view page in uikit
       body: ChatConversationsView(
         // Click to jump to the message page.

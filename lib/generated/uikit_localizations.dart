@@ -198,7 +198,7 @@ abstract class AppLocalizations {
   /// No description provided for @uikitRecall.
   ///
   /// In en, this message translates to:
-  /// **'Recall'**
+  /// **'Unsend'**
   String get uikitRecall;
 
   /// No description provided for @uikitSend.

@@ -377,7 +377,12 @@ class ChatConversationsViewState extends State<ChatConversationsView> {
                         ),
                       ],
                       child: Container(
-                        color: Colors.white,
+                        decoration: const BoxDecoration(
+                          color: Colors.white,
+                          border: Border(
+                            bottom: BorderSide(color: Color(0xffEFEFEF)),
+                          ),
+                        ),
                         child: ChatConversationListTile(
                           avatar: widget.avatarBuilder
                                   ?.call(context, conversation) ??
@@ -402,7 +407,7 @@ class ChatConversationsViewState extends State<ChatConversationsView> {
               },
               childCount: _tmpList.length,
             ),
-          )
+          ),
         ],
       ),
     );

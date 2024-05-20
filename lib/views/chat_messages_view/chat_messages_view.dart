@@ -145,6 +145,7 @@ class _ChatMessagesViewState extends State<ChatMessagesView> {
     super.initState();
     _textController =
         widget.inputBarTextEditingController ?? TextEditingController();
+    widget.messageListViewController.markAllMessagesAsRead();
   }
 
   @override

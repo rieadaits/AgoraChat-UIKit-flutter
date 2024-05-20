@@ -1,3 +1,6 @@
+import 'package:intl/intl.dart';
+import 'package:jiffy/jiffy.dart';
+
 enum TimeType {
   today,
   month,
@@ -24,6 +27,11 @@ class TimeTool {
   }
 
   static String timeStrByMs(int ms, {bool showTime = false}) {
+    DateTime date = DateTime.fromMillisecondsSinceEpoch(ms);
+    return Jiffy.parseFromDateTime(date).startOf(Unit.minute).fromNow();
+  }
+
+  static String timeForMessages(int ms, {bool showTime = false}) {
     // 根据传入时间判断是否是今天、本月、本年,
     // 今天，返回 HH:mm
     // 本月，返回 MM/dd HH:mm
@@ -34,16 +42,16 @@ class TimeTool {
     String ret = "";
     switch (type) {
       case TimeType.today:
-        ret =
-            "${date.hour.toString().padLeft(2, '0')}:${date.minute.toString().padLeft(2, '0')}";
+        ret = DateFormat('h:mm a').format(date);
+        // ret = "${date.hour.toString().padLeft(2, '0')}:${date.minute.toString().padLeft(2, '0')}";
         break;
       case TimeType.month:
-        ret =
-            "${date.month.toString().padLeft(2, '0')}/${date.day.toString().padLeft(2, '0')} ${date.hour.toString().padLeft(2, '0')}:${date.minute.toString().padLeft(2, '0')}";
+        ret = DateFormat('MMMM dd, h:mm a').format(date);
+        // ret = "${date.month.toString().padLeft(2, '0')}/${date.day.toString().padLeft(2, '0')} ${date.hour.toString().padLeft(2, '0')}:${date.minute.toString().padLeft(2, '0')}";
         break;
       case TimeType.year:
-        ret =
-            "${date.year.toString()}/${date.month.toString().padLeft(2, '0')}/${date.day.toString().padLeft(2, '0')} ${date.hour.toString().padLeft(2, '0')}:${date.minute.toString().padLeft(2, '0')}";
+        ret = DateFormat('MMMM dd, yyyy h:mm a').format(date);
+        // ret = "${date.year.toString()}/${date.month.toString().padLeft(2, '0')}/${date.day.toString().padLeft(2, '0')} ${date.hour.toString().padLeft(2, '0')}:${date.minute.toString().padLeft(2, '0')}";
         break;
     }
     return ret;
