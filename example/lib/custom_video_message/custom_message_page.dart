@@ -1,6 +1,3 @@
-import 'dart:io';
-import 'dart:math';
-
 import 'package:agora_chat_uikit/agora_chat_uikit.dart';
 import 'package:example/custom_video_message/play_video_page.dart';
 import 'package:flutter/material.dart';
@@ -23,6 +20,12 @@ class _CustomMessagesPageState extends State<CustomMessagesPage> {
   void initState() {
     super.initState();
     controller = ChatMessageListController(widget.conversation);
+  }
+
+  @override
+  void dispose() {
+    controller.dispose();
+    super.dispose();
   }
 
   @override
@@ -97,45 +100,6 @@ class _CustomMessagesPageState extends State<CustomMessagesPage> {
         ),
       ),
     );
-  }
-
-  void sendVideoMessage() async {
-    final XFile? video =
-        await ImagePicker().pickVideo(source: ImageSource.gallery);
-    if (video != null) {
-      final imageData = await VideoThumbnail.thumbnailData(
-        video: video.path,
-        imageFormat: ImageFormat.JPEG,
-        maxWidth:
-            200, // specify the width of the thumbnail, let the height auto-scaled to keep the source aspect ratio
-        quality: 80,
-      );
-      if (imageData != null) {
-        final directory = await getApplicationCacheDirectory();
-        String thumbnailPath =
-            '${directory.path}/thumbnail_${Random().nextInt(999999999)}.jpeg';
-        final file = File(thumbnailPath);
-        file.writeAsBytesSync(imageData);
-
-        final videoFile = File(video.path);
-
-        Image.file(file)
-            .image
-            .resolve(const ImageConfiguration())
-            .addListener(ImageStreamListener((info, synchronousCall) {
-          final msg = ChatMessage.createVideoSendMessage(
-            targetId: controller.conversation.id,
-            filePath: video.path,
-            thumbnailLocalPath: file.path,
-            chatType: ChatType.values[controller.conversation.type.index],
-            width: info.image.width.toDouble(),
-            height: info.image.height.toDouble(),
-            fileSize: videoFile.sizeInBytes,
-          );
-          controller.sendMessage(msg);
-        }));
-      }
-    }
   }
 
   void showSnackBar(String str) {

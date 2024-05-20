@@ -487,10 +487,17 @@ class _ChatMessagesViewState extends State<ChatMessagesView> {
     widget.messageListViewController.play(message);
     widget.messageListViewController.refreshUI();
     ChatVoiceMessageBody body = message.body as ChatVoiceMessageBody;
-    await _player.stop();
-    await _player.setFilePath(body.localPath).onError((error, stackTrace) {
-      return null;
-    });
+
+    if (!_player.playing) {
+      await _player.stop();
+    }
+
+    if (Platform.isIOS) {
+      final path = body.localPath.replaceAll("private", "");
+      await _player.setFilePath(path);
+    } else {
+      await _player.setFilePath(body.localPath);
+    }
 
     await _player.play().whenComplete(() => _stopVoice());
   }
