@@ -73,10 +73,19 @@ class ChatConversationsController extends ChatBaseController {
     removeChatListener();
   }
 
-  /// load all conversations and refresh the list.
-  Future<void> loadAllConversations() async {
+  /// load all conversations Locally and refresh the list.
+  /* Future<void> loadAllConversations() async {
     List<ChatConversation> list =
         await ChatClient.getInstance.chatManager.loadAllConversations();
+    conversationList = await sortHandle?.call(list) ?? list;
+  }*/
+
+  Future<void> loadAllConversations() async {
+    ChatCursorResult<ChatConversation> result =
+        await ChatClient.getInstance.chatManager.fetchConversation();
+
+    List<ChatConversation> list = result.data;
+
     conversationList = await sortHandle?.call(list) ?? list;
   }
 

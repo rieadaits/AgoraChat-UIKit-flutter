@@ -1,5 +1,5 @@
-import 'package:flutter/material.dart';
 import 'package:agora_chat_uikit/internal/chat_method.dart';
+import 'package:flutter/material.dart';
 
 import '../../agora_chat_uikit.dart';
 
@@ -37,6 +37,8 @@ class ChatMessageListController extends ChatBaseController {
   /// Other types of messages require a separate call to the [ChatMessageListController.sendReadAck] method, which is invalidated if turned off.
   final bool enableReadAck;
   final List<ChatMessageListItemModel> msgList = [];
+  int count = 10;
+  String? cursor;
 
   void updateMsgList(List<ChatMessageListItemModel> list) {
     msgList.addAll(list);
@@ -97,7 +99,7 @@ class ChatMessageListController extends ChatBaseController {
   /// load messages and refresh list.
   ///
   /// Param [count] load count.
-  Future<void> loadMoreMessage([int count = 10]) async {
+  Future<void> loadMoreMessage() async {
     if (_loading) return;
     _loading = true;
     if (!_hasMore) {
@@ -105,13 +107,38 @@ class ChatMessageListController extends ChatBaseController {
       return;
     }
 
-    List<ChatMessage> list = await conversation.loadMessages(
-      startMsgId: msgList.isEmpty ? "" : msgList.last.msgId,
-      loadCount: count,
+    FetchMessageOptions options = FetchMessageOptions(
+      from: ChatClient.getInstance.currentUserId,
+      direction: ChatSearchDirection.Up,
+      endTs: DateTime.now().toUtc().millisecondsSinceEpoch,
     );
-    if (list.length < count) {
+
+    ChatCursorResult<ChatMessage> result =
+        await ChatClient.getInstance.chatManager.fetchHistoryMessagesByOption(
+      "enamul",
+      ChatConversationType.Chat,
+      options: options,
+      pageSize: count,
+      cursor: cursor,
+    );
+    final list = result.data;
+    list.sort((a, b) => a.createTs.compareTo(b.createTs));
+    list.reversed;
+    cursor = result.cursor;
+
+    // List<ChatMessage> list = await conversation.loadMessages(
+    //   startMsgId: msgList.isEmpty ? "" : msgList.last.msgId,
+    //   loadCount: count,
+    // );
+
+    print("object: ${result.cursor}");
+
+    if (cursor == "undefined") {
       _hasMore = false;
     }
+
+    // print("object length: ${list.length}");
+    // print("object count: $count");
 
     List<ChatMessageListItemModel> models = _modelsCreator(list, _hasMore);
 
