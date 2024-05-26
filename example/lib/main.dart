@@ -6,9 +6,8 @@ import 'package:flutter/material.dart';
 
 class ChatConfig {
   static String appKey = '611147007#1332714';
-  static String userId = "enamul";
-  static String agoraToken =
-      "007eJxTYPD46327Y2OTndTkN/Wrvyav435n/tPT7OAEnk8b1HNM498pMJgZJxkbWqSZmJqkWpgYmFokmpikmScnGRknW5qbJSUaf3rildYQyMhgO9WUlZGBlYERCEF8FQaLxCSzVEszA11DA+NkXUPD1DTdREMjI12LJMOkFHPT1NREMxMA+ZMoiA==";
+  static String userId = "riead";
+  static String agoraToken = "007eJxTYDi5RcqpLub8/7RU4ydpi/KnBB86cPXZafsVkk8P1qY4ynApMJgZJxkbWqSZmJqkWpgYmFokmpikmScnGRknW5qbJSUaK5wPSmsIZGTI7SxjZGRgZWAEQhBfhcE81dIoxdLUQNfQwDhZ19AwNU03ydgiVdcsxSw5xcLCxNg8xRgAwnknkg==";
 }
 
 void main() async {
