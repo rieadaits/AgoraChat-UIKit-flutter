@@ -99,7 +99,7 @@ class ChatMessageListController extends ChatBaseController {
   /// load messages and refresh list.
   ///
   /// Param [count] load count.
-  Future<void> loadMoreMessage() async {
+  Future<void> loadMoreMessage({required String convId}) async {
     if (_loading) return;
     _loading = true;
     if (!_hasMore) {
@@ -109,23 +109,25 @@ class ChatMessageListController extends ChatBaseController {
 
     FetchMessageOptions options = FetchMessageOptions(
       from: ChatClient.getInstance.currentUserId,
-      direction: ChatSearchDirection.Up,
+      direction: ChatSearchDirection.Down,
       endTs: DateTime.now().toUtc().millisecondsSinceEpoch,
     );
 
     ChatCursorResult<ChatMessage> result =
         await ChatClient.getInstance.chatManager.fetchHistoryMessagesByOption(
-      "enamul",
+          convId,
       ChatConversationType.Chat,
-      options: options,
       pageSize: count,
       cursor: cursor,
+      options: options,
     );
+
     final list = result.data;
-    list.sort((a, b) => a.createTs.compareTo(b.createTs));
-    list.reversed;
+    // list.sort((a, b) => a.localTime.compareTo(b.localTime));
+    // list.reversed;
     cursor = result.cursor;
 
+    /// Loads multiple messages from the local database.
     // List<ChatMessage> list = await conversation.loadMessages(
     //   startMsgId: msgList.isEmpty ? "" : msgList.last.msgId,
     //   loadCount: count,
@@ -216,7 +218,7 @@ class ChatMessageListController extends ChatBaseController {
   /// If the message roaming interface is called, the deleted message can still be retrieved.
   /// current conversation see [ChatMessagesList]. message roaming see [ChatManager.fetchHistoryMessages].
   Future<void> deleteAllMessages() async {
-    await chatClient.chatManager.deleteConversation(conversation.id);
+    await chatClient.chatManager.deleteRemoteConversation(conversation.id);
     _latestShowTsTime = -1;
     msgList.clear();
     refreshUI();
@@ -317,6 +319,9 @@ class ChatMessageListController extends ChatBaseController {
         },
         onMessagesRead: _updateMessageItems,
         onMessagesReceived: (messages) {
+          for (var element in messages) {
+            debugPrint("message received: ${element.chatType.name}");
+          }
           List<ChatMessage> tmp = messages
               .where((element) => element.conversationId == conversation.id)
               .toList();
@@ -514,7 +519,7 @@ class _ChatMessagesListState extends State<ChatMessagesList>
     widget.messageListViewController.markAllMessagesAsRead();
     widget.messageListViewController
         ._bindingActions(reloadData: _reloadData, onError: _onError);
-    widget.messageListViewController.loadMoreMessage();
+    widget.messageListViewController.loadMoreMessage(convId: widget.conversation.id);
     _scrollController.addListener(scrollListener);
   }
 
@@ -553,7 +558,7 @@ class _ChatMessagesListState extends State<ChatMessagesList>
   void scrollListener() async {
     if (_scrollController.position.maxScrollExtent ==
         _scrollController.offset) {
-      widget.messageListViewController.loadMoreMessage();
+      widget.messageListViewController.loadMoreMessage(convId: widget.conversation.id);
     }
     widget.needDismissInputWidgetAction?.call();
   }

@@ -2,12 +2,25 @@ import 'package:agora_chat_uikit/agora_chat_uikit.dart';
 import 'package:example/conversations_page.dart';
 import 'package:example/custom_video_message/custom_message_page.dart';
 import 'package:example/messages_page.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+
+// jashem:
+String jashemToken =
+    "007eJxTYGiKv9Aw71GxyvILNg9vnvownTszaLXs7oTff2X2tNZJ7jFSYDAzTjI2tEgzMTVJtTAxMLVINDFJM09OMjJOtjQ3S0o0ThUKSWsIZGSQPTeTlZGBlYERCEF8FQbLlKRUE/MkA11DA+NkXUPD1DRdS4tEI90kU4MUo9QkE6MUMxMAEJUoUA==";
+//riead
+String rieadToken =
+    "007eJxTYFgqf/h9xB7v3N0/+4MM1/1cvTpoyo1+R6587xN8plskhRUUGMyMk4wNLdJMTE1SLUwMTC0STUzSzJOTjIyTLc3NkhKN+YVD0hoCGRmyLzkzMDKwAjEjA4ivwmCeammUYmlqoGtoYJysa2iYmqabZGyRqmuWYpacYmFhYmyeYgwAFTElhQ==";
+//enamul
+String enamulToken =
+    "007eJxTYPjfemzbnocTnlx03uC6fEE321r996y3tmkaaimbmNu9mcSlwGBmnGRsaJFmYmqSamFiYGqRaGKSZp6cZGScbGlulpRozGAbktYQyMjgwDeDhZGBlYERCEF8FQaLxCSzVEszA11DA+NkXUPD1DTdREMjI12LJMOkFHPT1NREMxMAY8QmGA==";
 
 class ChatConfig {
   static String appKey = '611147007#1332714';
-  static String userId = "riead";
-  static String agoraToken = "007eJxTYDi5RcqpLub8/7RU4ydpi/KnBB86cPXZafsVkk8P1qY4ynApMJgZJxkbWqSZmJqkWpgYmFokmpikmScnGRknW5qbJSUaK5wPSmsIZGTI7SxjZGRgZWAEQhBfhcE81dIoxdLUQNfQwDhZ19AwNU03ydgiVdcsxSw5xcLCxNg8xRgAwnknkg==";
+  static String userId = "enamul";
+  static String agoraToken =
+      "007eJxTYPjfemzbnocTnlx03uC6fEE321r996y3tmkaaimbmNu9mcSlwGBmnGRsaJFmYmqSamFiYGqRaGKSZp6cZGScbGlulpRozGAbktYQyMjgwDeDhZGBlYERCEF8FQaLxCSzVEszA11DA+NkXUPD1DTdREMjI12LJMOkFHPT1NREMxMAY8QmGA==";
+
 }
 
 void main() async {
@@ -24,6 +37,7 @@ void main() async {
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -56,6 +70,9 @@ class _MyHomePageState extends State<MyHomePage> {
   ChatConversation? conversation;
   String _chatId = "";
   final List<String> _logText = [];
+  final String groupIdOne = "248848107765762";
+  final String groupIdTwo = "248845270319106";
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -117,7 +134,7 @@ class _MyHomePageState extends State<MyHomePage> {
                   ),
                 ),
                 const SizedBox(height: 10),
-                Row(
+                Column(
                   children: [
                     TextButton(
                       onPressed: () {
@@ -130,6 +147,32 @@ class _MyHomePageState extends State<MyHomePage> {
                             MaterialStateProperty.all(Colors.lightBlue),
                       ),
                       child: const Text("START CHAT"),
+                    ),
+                    const SizedBox(width: 10),
+                    TextButton(
+                      onPressed: () {
+                        createGroup(_chatId);
+                      },
+                      style: ButtonStyle(
+                        foregroundColor:
+                            MaterialStateProperty.all(Colors.white),
+                        backgroundColor:
+                            MaterialStateProperty.all(Colors.lightBlue),
+                      ),
+                      child: const Text("CREATE GROUP CHAT"),
+                    ),
+                    const SizedBox(width: 10),
+                    TextButton(
+                      onPressed: () {
+                        addMembers(_chatId);
+                      },
+                      style: ButtonStyle(
+                        foregroundColor:
+                            MaterialStateProperty.all(Colors.white),
+                        backgroundColor:
+                            MaterialStateProperty.all(Colors.lightBlue),
+                      ),
+                      child: const Text("ADD MEMBER"),
                     ),
                     const SizedBox(width: 10),
                     TextButton(
@@ -185,24 +228,26 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   void pushToChatPage(String userId) async {
-    if (userId.isEmpty) {
-      _addLogToConsole('UserId is null');
-      return;
-    }
     if (ChatClient.getInstance.currentUserId == null) {
       _addLogToConsole('user not login');
       return;
     }
     ChatConversation? conv =
-        await ChatClient.getInstance.chatManager.getConversation(userId);
+        await ChatClient.getInstance.chatManager.getConversation(groupIdTwo);
+
+    ChatCursorResult<ChatGroupInfo> grpData =
+    await ChatClient.getInstance.groupManager.fetchPublicGroupsFromServer();
+
+    final data = grpData.data;
+
     Future(() {
       Navigator.of(context).push(MaterialPageRoute(builder: (_) {
-        return MessagesPage(conv!);
+        return MessagesPage(conv!, groupName: data.last.name!,);
       }));
     });
   }
 
-  void pushToCustomChatPage(String userId) async {
+  void createGroup(String userId) async {
     if (userId.isEmpty) {
       _addLogToConsole('UserId is null');
       return;
@@ -211,8 +256,36 @@ class _MyHomePageState extends State<MyHomePage> {
       _addLogToConsole('user not login');
       return;
     }
+
+    ChatGroupOptions groupOptions = ChatGroupOptions(
+      style: ChatGroupStyle.PublicOpenJoin,
+      inviteNeedConfirm: false,
+    );
+
+    await ChatClient.getInstance.groupManager.createGroup(
+        groupName: "testing group2",
+        options: groupOptions,
+        inviteMembers: [userId]);
+  }
+
+  void addMembers(String userId) async {
+
+    await ChatClient.getInstance.groupManager.addMembers(groupIdOne, [userId]).then((value) {
+
+      print("$userId added to group.");
+    });
+
+  }
+
+  void pushToCustomChatPage(String userId) async {
+
+    if (ChatClient.getInstance.currentUserId == null) {
+      _addLogToConsole('user not login');
+      return;
+    }
     ChatConversation? conv =
-        await ChatClient.getInstance.chatManager.getConversation(userId);
+        await ChatClient.getInstance.chatManager.getConversation(groupIdOne);
+
     Future(() {
       Navigator.of(context).push(MaterialPageRoute(builder: (_) {
         return CustomMessagesPage(conv!);

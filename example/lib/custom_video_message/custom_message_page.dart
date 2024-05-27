@@ -5,7 +5,10 @@ import 'package:flutter/material.dart';
 import 'chat_message_list_video_item.dart';
 
 class CustomMessagesPage extends StatefulWidget {
-  const CustomMessagesPage(this.conversation, {super.key});
+  const CustomMessagesPage(
+    this.conversation, {
+    super.key,
+  });
 
   final ChatConversation conversation;
 
@@ -15,11 +18,13 @@ class CustomMessagesPage extends StatefulWidget {
 
 class _CustomMessagesPageState extends State<CustomMessagesPage> {
   late final ChatMessageListController controller;
+  String groupName = '';
 
   @override
   void initState() {
     super.initState();
     controller = ChatMessageListController(widget.conversation);
+    getGroupNameById();
   }
 
   @override
@@ -28,27 +33,26 @@ class _CustomMessagesPageState extends State<CustomMessagesPage> {
     super.dispose();
   }
 
+  getGroupNameById() async {
+    ChatCursorResult<ChatGroupInfo> grpData =
+        await ChatClient.getInstance.groupManager.fetchPublicGroupsFromServer();
+
+    final data = grpData.data;
+
+    for (var element in data) {
+      if (element.groupId == widget.conversation.id) {
+        setState(() {
+          groupName = element.name!;
+        });
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(widget.conversation.id),
-        actions: [
-          UnconstrainedBox(
-            child: InkWell(
-              onTap: () {
-                controller.deleteAllMessages();
-              },
-              child: const Padding(
-                padding: EdgeInsets.all(10),
-                child: Text(
-                  'Delete',
-                  style: TextStyle(fontSize: 16),
-                ),
-              ),
-            ),
-          )
-        ],
+        title: Text(groupName),
       ),
       body: SafeArea(
         child: ChatMessagesView(

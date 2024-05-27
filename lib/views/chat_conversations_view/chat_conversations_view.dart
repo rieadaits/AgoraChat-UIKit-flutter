@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 
@@ -97,7 +99,7 @@ class ChatConversationsController extends ChatBaseController {
     int index = list.indexWhere((element) => element.id == id);
     if (index >= 0) {
       list.removeAt(index);
-      await ChatClient.getInstance.chatManager.deleteConversation(id);
+      await ChatClient.getInstance.chatManager.deleteRemoteConversation(id);
       conversationList = await sortHandle?.call(list) ?? list;
     }
   }
@@ -318,6 +320,7 @@ class ChatConversationsViewState extends State<ChatConversationsView> {
   }
 
   final List<ChatConversation> _tmpList = [];
+  final List<String> groupNames = [];
 
   @override
   Widget build(BuildContext context) {
@@ -397,7 +400,7 @@ class ChatConversationsViewState extends State<ChatConversationsView> {
                                   ?.call(context, conversation) ??
                               ChatImageLoader.defaultAvatar(size: 50),
                           title: widget.nicknameBuilder
-                              ?.call(context, conversation),
+                              ?.call(context, conversation,),
                           conversation: conversation,
                           onTap: (conversation) {
                             widget.onItemTap?.call(conversation);
