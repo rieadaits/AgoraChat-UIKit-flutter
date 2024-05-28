@@ -2,25 +2,23 @@ import 'package:agora_chat_uikit/agora_chat_uikit.dart';
 import 'package:example/conversations_page.dart';
 import 'package:example/custom_video_message/custom_message_page.dart';
 import 'package:example/messages_page.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 // jashem:
 String jashemToken =
-    "007eJxTYGiKv9Aw71GxyvILNg9vnvownTszaLXs7oTff2X2tNZJ7jFSYDAzTjI2tEgzMTVJtTAxMLVINDFJM09OMjJOtjQ3S0o0ThUKSWsIZGSQPTeTlZGBlYERCEF8FQbLlKRUE/MkA11DA+NkXUPD1DRdS4tEI90kU4MUo9QkE6MUMxMAEJUoUA==";
+    "007eJxTYDjW7LVRLOZQ0kfPy4ZKax+bljpLXVtxKGZ2bEKHckzlnwUKDGbGScaGFmkmpiapFiYGphaJJiZp5slJRsbJluZmSYnGSkmhaQ2BjAzLPCOZGRlYGRiBEMRXYbBMSUo1MU8y0DU0ME7WNTRMTdO1tEg00k0yNUgxSk0yMUoxMwEAP94meA==";
 //riead
 String rieadToken =
-    "007eJxTYFgqf/h9xB7v3N0/+4MM1/1cvTpoyo1+R6587xN8plskhRUUGMyMk4wNLdJMTE1SLUwMTC0STUzSzJOTjIyTLc3NkhKN+YVD0hoCGRmyLzkzMDKwAjEjA4ivwmCeammUYmlqoGtoYJysa2iYmqabZGyRqmuWYpacYmFhYmyeYgwAFTElhQ==";
+    "007eJxTYHj2ceXvOVrbTO/1nXzlK/tvma3Z+8e1bsmqZ1fmL5qUFzpBgcHMOMnY0CLNxNQk1cLEwNQi0cQkzTw5ycg42dLcLCnR+H9iaFpDICPDx/79jIwMrAyMQAjiqzCYp1oapViaGugaGhgn6xoapqbpJhlbpOqapZglp1hYmBibpxgDAMtGKnc=";
+
 //enamul
 String enamulToken =
-    "007eJxTYPjfemzbnocTnlx03uC6fEE321r996y3tmkaaimbmNu9mcSlwGBmnGRsaJFmYmqSamFiYGqRaGKSZp6cZGScbGlulpRozGAbktYQyMjgwDeDhZGBlYERCEF8FQaLxCSzVEszA11DA+NkXUPD1DTdREMjI12LJMOkFHPT1NREMxMAY8QmGA==";
+    "007eJxTYDh90qf28pzH2VvD+Nt3hW94YHslaOb6Ko4styU986e2mkUqMJgZJxkbWqSZmJqkWpgYmFokmpikmScnGRknW5qbJSUaWyaFpjUEMjKIxO1kZWRgZWAEQhBfhcEiMcks1dLMQNfQwDhZ19AwNU030dDISNciyTApxdw0NTXRzAQAqgYnRA==";
 
 class ChatConfig {
   static String appKey = '611147007#1332714';
   static String userId = "enamul";
-  static String agoraToken =
-      "007eJxTYPjfemzbnocTnlx03uC6fEE321r996y3tmkaaimbmNu9mcSlwGBmnGRsaJFmYmqSamFiYGqRaGKSZp6cZGScbGlulpRozGAbktYQyMjgwDeDhZGBlYERCEF8FQaLxCSzVEszA11DA+NkXUPD1DTdREMjI12LJMOkFHPT1NREMxMAY8QmGA==";
-
+  static String agoraToken = enamulToken;
 }
 
 void main() async {
@@ -134,67 +132,23 @@ class _MyHomePageState extends State<MyHomePage> {
                   ),
                 ),
                 const SizedBox(height: 10),
-                Column(
-                  children: [
-                    TextButton(
-                      onPressed: () {
-                        pushToChatPage(_chatId);
-                      },
-                      style: ButtonStyle(
-                        foregroundColor:
-                            MaterialStateProperty.all(Colors.white),
-                        backgroundColor:
-                            MaterialStateProperty.all(Colors.lightBlue),
-                      ),
-                      child: const Text("START CHAT"),
-                    ),
-                    const SizedBox(width: 10),
-                    TextButton(
-                      onPressed: () {
-                        createGroup(_chatId);
-                      },
-                      style: ButtonStyle(
-                        foregroundColor:
-                            MaterialStateProperty.all(Colors.white),
-                        backgroundColor:
-                            MaterialStateProperty.all(Colors.lightBlue),
-                      ),
-                      child: const Text("CREATE GROUP CHAT"),
-                    ),
-                    const SizedBox(width: 10),
-                    TextButton(
-                      onPressed: () {
-                        addMembers(_chatId);
-                      },
-                      style: ButtonStyle(
-                        foregroundColor:
-                            MaterialStateProperty.all(Colors.white),
-                        backgroundColor:
-                            MaterialStateProperty.all(Colors.lightBlue),
-                      ),
-                      child: const Text("ADD MEMBER"),
-                    ),
-                    const SizedBox(width: 10),
-                    TextButton(
-                      onPressed: () {
-                        pushToCustomChatPage(_chatId);
-                      },
-                      style: ButtonStyle(
-                        foregroundColor:
-                            MaterialStateProperty.all(Colors.white),
-                        backgroundColor:
-                            MaterialStateProperty.all(Colors.lightBlue),
-                      ),
-                      child: const Text("CUSTOM CHAT"),
-                    ),
-                  ],
-                )
+                TextButton(
+                  onPressed: () {
+                    _pushToChatPage(_chatId);
+                  },
+                  style: ButtonStyle(
+                    foregroundColor: MaterialStateProperty.all(Colors.white),
+                    backgroundColor:
+                        MaterialStateProperty.all(Colors.lightBlue),
+                  ),
+                  child: const Text("START CHAT"),
+                ),
               ],
             ),
             const SizedBox(height: 10),
             TextButton(
               onPressed: () {
-                pushToConversationPage();
+                _pushToConversationPage();
               },
               style: ButtonStyle(
                 foregroundColor: MaterialStateProperty.all(Colors.white),
@@ -217,7 +171,7 @@ class _MyHomePageState extends State<MyHomePage> {
     );
   }
 
-  void pushToConversationPage() async {
+  void _pushToConversationPage() async {
     if (ChatClient.getInstance.currentUserId == null) {
       _addLogToConsole('user not login');
       return;
@@ -227,7 +181,7 @@ class _MyHomePageState extends State<MyHomePage> {
     }));
   }
 
-  void pushToChatPage(String userId) async {
+  void _pushToChatPage(String userId) async {
     if (ChatClient.getInstance.currentUserId == null) {
       _addLogToConsole('user not login');
       return;
@@ -236,18 +190,21 @@ class _MyHomePageState extends State<MyHomePage> {
         await ChatClient.getInstance.chatManager.getConversation(groupIdTwo);
 
     ChatCursorResult<ChatGroupInfo> grpData =
-    await ChatClient.getInstance.groupManager.fetchPublicGroupsFromServer();
+        await ChatClient.getInstance.groupManager.fetchPublicGroupsFromServer();
 
     final data = grpData.data;
 
     Future(() {
       Navigator.of(context).push(MaterialPageRoute(builder: (_) {
-        return MessagesPage(conv!, groupName: data.last.name!,);
+        return MessagesPage(
+          conv!,
+          groupName: data.last.name!,
+        );
       }));
     });
   }
 
-  void createGroup(String userId) async {
+  void _createGroup(String userId) async {
     if (userId.isEmpty) {
       _addLogToConsole('UserId is null');
       return;
@@ -268,17 +225,14 @@ class _MyHomePageState extends State<MyHomePage> {
         inviteMembers: [userId]);
   }
 
-  void addMembers(String userId) async {
-
-    await ChatClient.getInstance.groupManager.addMembers(groupIdOne, [userId]).then((value) {
-
+  void _addMembers(String userId) async {
+    await ChatClient.getInstance.groupManager
+        .addMembers(groupIdOne, [userId]).then((value) {
       print("$userId added to group.");
     });
-
   }
 
-  void pushToCustomChatPage(String userId) async {
-
+  void _pushToCustomChatPage(String userId) async {
     if (ChatClient.getInstance.currentUserId == null) {
       _addLogToConsole('user not login');
       return;

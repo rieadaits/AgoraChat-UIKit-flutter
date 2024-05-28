@@ -52,6 +52,7 @@ class ChatMessagesView extends StatefulWidget {
     required this.conversation,
     this.inputBarTextEditingController,
     this.background,
+    this.canStartChat = true,
     this.inputBar,
     this.onTap,
     this.onBubbleLongPress,
@@ -71,6 +72,9 @@ class ChatMessagesView extends StatefulWidget {
             ChatMessageListController(conversation);
 
   final Widget? background;
+
+  /// User can start Chat.
+  final bool canStartChat;
 
   /// Text input widget text editing controller.
   final TextEditingController? inputBarTextEditingController;
@@ -216,50 +220,52 @@ class _ChatMessagesViewState extends State<ChatMessagesView> {
             },
           ),
         ),
-        widget.inputBar ??
-            ChatInputBar(
-              textEditingController: _textController,
-              focusNode: _focusNode,
-              inputWidgetOnTap: () {
-                if (!_focusNode.hasFocus) {
-                  _focusNode.requestFocus();
-                }
-                widget.messageListViewController.refreshUI(moveToEnd: true);
-              },
-              emojiWidgetOnTap: () {
-                if (_focusNode.hasFocus) {
-                  _focusNode.unfocus();
-                }
-                widget.messageListViewController.refreshUI(moveToEnd: true);
-              },
-              recordTouchDown: () async {
-                await _startRecord();
-              },
-              recordTouchUpInside: () async {
-                await _stopRecord();
-              },
-              recordTouchUpOutside: _cancelRecord,
-              recordDragInside: _recordDragInside,
-              recordDragOutside: _recordDragOutside,
-              moreAction: showMoreItems,
-              onTextFieldChanged: (text) {},
-              onSendBtnTap: (text) {
-                var msg = ChatMessage.createTxtSendMessage(
-                    targetId: widget.conversation.id, content: text);
-                msg.chatType = ChatType.values[widget.conversation.type.index];
-                ChatMessage? willSend;
-                if (widget.willSendMessage != null) {
-                  willSend = widget.willSendMessage!.call(msg);
-                  if (willSend == null) {
-                    return;
+        if (widget.canStartChat)
+          widget.inputBar ??
+              ChatInputBar(
+                textEditingController: _textController,
+                focusNode: _focusNode,
+                inputWidgetOnTap: () {
+                  if (!_focusNode.hasFocus) {
+                    _focusNode.requestFocus();
                   }
-                } else {
-                  willSend = msg;
-                }
+                  widget.messageListViewController.refreshUI(moveToEnd: true);
+                },
+                emojiWidgetOnTap: () {
+                  if (_focusNode.hasFocus) {
+                    _focusNode.unfocus();
+                  }
+                  widget.messageListViewController.refreshUI(moveToEnd: true);
+                },
+                recordTouchDown: () async {
+                  await _startRecord();
+                },
+                recordTouchUpInside: () async {
+                  await _stopRecord();
+                },
+                recordTouchUpOutside: _cancelRecord,
+                recordDragInside: _recordDragInside,
+                recordDragOutside: _recordDragOutside,
+                moreAction: showMoreItems,
+                onTextFieldChanged: (text) {},
+                onSendBtnTap: (text) {
+                  var msg = ChatMessage.createTxtSendMessage(
+                      targetId: widget.conversation.id, content: text);
+                  msg.chatType =
+                      ChatType.values[widget.conversation.type.index];
+                  ChatMessage? willSend;
+                  if (widget.willSendMessage != null) {
+                    willSend = widget.willSendMessage!.call(msg);
+                    if (willSend == null) {
+                      return;
+                    }
+                  } else {
+                    willSend = msg;
+                  }
 
-                widget.messageListViewController.sendMessage(willSend);
-              },
-            )
+                  widget.messageListViewController.sendMessage(willSend);
+                },
+              )
       ],
     );
 

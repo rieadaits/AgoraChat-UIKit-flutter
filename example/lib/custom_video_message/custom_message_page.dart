@@ -56,6 +56,7 @@ class _CustomMessagesPageState extends State<CustomMessagesPage> {
       ),
       body: SafeArea(
         child: ChatMessagesView(
+          canStartChat: false,
           messageListViewController: controller,
           conversation: widget.conversation,
           onError: (error) {
