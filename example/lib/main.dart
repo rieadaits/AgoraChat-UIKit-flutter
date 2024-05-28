@@ -187,18 +187,17 @@ class _MyHomePageState extends State<MyHomePage> {
       return;
     }
     ChatConversation? conv =
-        await ChatClient.getInstance.chatManager.getConversation(groupIdTwo);
+        await ChatClient.getInstance.chatManager.getConversation(groupIdOne);
 
-    ChatCursorResult<ChatGroupInfo> grpData =
-        await ChatClient.getInstance.groupManager.fetchPublicGroupsFromServer();
-
-    final data = grpData.data;
+    // ChatCursorResult<ChatGroupInfo> grpData =
+    //     await ChatClient.getInstance.groupManager.fetchPublicGroupsFromServer();
+    //
+    // final data = grpData.data;
 
     Future(() {
       Navigator.of(context).push(MaterialPageRoute(builder: (_) {
         return MessagesPage(
           conv!,
-          groupName: data.last.name!,
         );
       }));
     });
