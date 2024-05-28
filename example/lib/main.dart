@@ -16,8 +16,8 @@ String enamulToken =
 
 class ChatConfig {
   static String appKey = '611147007#1332714';
-  static String userId = "enamul";
-  static String agoraToken = enamulToken;
+  static String userId = "riead";
+  static String agoraToken = rieadToken;
 }
 
 void main() async {
@@ -67,8 +67,9 @@ class _MyHomePageState extends State<MyHomePage> {
   ChatConversation? conversation;
   String _chatId = "";
   final List<String> _logText = [];
-  final String groupIdOne = "248848107765762";
-  final String groupIdTwo = "248845270319106";
+  final String groupIdOne = "248845270319106";
+  final String groupIdTwo = "248848107765762";
+  final String groupIdThree = "249018086129665";
 
   @override
   Widget build(BuildContext context) {
@@ -186,7 +187,7 @@ class _MyHomePageState extends State<MyHomePage> {
       return;
     }
     ChatConversation? conv =
-        await ChatClient.getInstance.chatManager.getConversation(groupIdOne);
+        await ChatClient.getInstance.chatManager.getConversation(groupIdThree);
 
     Future(() {
       Navigator.of(context).push(MaterialPageRoute(builder: (_) {

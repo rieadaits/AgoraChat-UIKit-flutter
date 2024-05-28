@@ -4,8 +4,8 @@ import 'package:flutter/material.dart';
 
 import 'chat_message_list_video_item.dart';
 
-class CustomMessagesPage extends StatefulWidget {
-  const CustomMessagesPage(
+class ArchiveMessagesPage extends StatefulWidget {
+  const ArchiveMessagesPage(
     this.conversation, {
     super.key,
   });
@@ -13,10 +13,10 @@ class CustomMessagesPage extends StatefulWidget {
   final ChatConversation conversation;
 
   @override
-  State<CustomMessagesPage> createState() => _CustomMessagesPageState();
+  State<ArchiveMessagesPage> createState() => _ArchiveMessagesPageState();
 }
 
-class _CustomMessagesPageState extends State<CustomMessagesPage> {
+class _ArchiveMessagesPageState extends State<ArchiveMessagesPage> {
   late final ChatMessageListController controller;
   String groupName = '';
 

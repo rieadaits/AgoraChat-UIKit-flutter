@@ -1,7 +1,7 @@
 import 'package:agora_chat_uikit/agora_chat_uikit.dart';
 import 'package:flutter/material.dart';
 
-import 'custom_video_message/custom_message_page.dart';
+import 'custom_video_message/archive_message_page.dart';
 
 class ConversationsPage extends StatefulWidget {
   const ConversationsPage({super.key});
@@ -23,7 +23,7 @@ class _ConversationsPageState extends State<ConversationsPage> {
           Navigator.of(context).push(
             MaterialPageRoute(
               builder: (context) {
-                return CustomMessagesPage(conversation);
+                return ArchiveMessagesPage(conversation);
               },
             ),
           );
