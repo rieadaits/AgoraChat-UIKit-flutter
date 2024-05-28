@@ -1,6 +1,5 @@
 import 'package:agora_chat_uikit/agora_chat_uikit.dart';
 import 'package:example/conversations_page.dart';
-import 'package:example/custom_video_message/custom_message_page.dart';
 import 'package:example/messages_page.dart';
 import 'package:flutter/material.dart';
 
@@ -189,59 +188,11 @@ class _MyHomePageState extends State<MyHomePage> {
     ChatConversation? conv =
         await ChatClient.getInstance.chatManager.getConversation(groupIdOne);
 
-    // ChatCursorResult<ChatGroupInfo> grpData =
-    //     await ChatClient.getInstance.groupManager.fetchPublicGroupsFromServer();
-    //
-    // final data = grpData.data;
-
     Future(() {
       Navigator.of(context).push(MaterialPageRoute(builder: (_) {
         return MessagesPage(
           conv!,
         );
-      }));
-    });
-  }
-
-  void _createGroup(String userId) async {
-    if (userId.isEmpty) {
-      _addLogToConsole('UserId is null');
-      return;
-    }
-    if (ChatClient.getInstance.currentUserId == null) {
-      _addLogToConsole('user not login');
-      return;
-    }
-
-    ChatGroupOptions groupOptions = ChatGroupOptions(
-      style: ChatGroupStyle.PublicOpenJoin,
-      inviteNeedConfirm: false,
-    );
-
-    await ChatClient.getInstance.groupManager.createGroup(
-        groupName: "testing group2",
-        options: groupOptions,
-        inviteMembers: [userId]);
-  }
-
-  void _addMembers(String userId) async {
-    await ChatClient.getInstance.groupManager
-        .addMembers(groupIdOne, [userId]).then((value) {
-      print("$userId added to group.");
-    });
-  }
-
-  void _pushToCustomChatPage(String userId) async {
-    if (ChatClient.getInstance.currentUserId == null) {
-      _addLogToConsole('user not login');
-      return;
-    }
-    ChatConversation? conv =
-        await ChatClient.getInstance.chatManager.getConversation(groupIdOne);
-
-    Future(() {
-      Navigator.of(context).push(MaterialPageRoute(builder: (_) {
-        return CustomMessagesPage(conv!);
       }));
     });
   }
