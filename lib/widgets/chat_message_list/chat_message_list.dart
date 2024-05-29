@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:agora_chat_uikit/internal/chat_method.dart';
 import 'package:flutter/material.dart';
 
@@ -37,7 +39,7 @@ class ChatMessageListController extends ChatBaseController {
   /// Other types of messages require a separate call to the [ChatMessageListController.sendReadAck] method, which is invalidated if turned off.
   final bool enableReadAck;
   final List<ChatMessageListItemModel> msgList = [];
-  int count = 10;
+  int count = 30;
   String? cursor;
 
   void updateMsgList(List<ChatMessageListItemModel> list) {
@@ -99,7 +101,7 @@ class ChatMessageListController extends ChatBaseController {
   /// load messages and refresh list.
   ///
   /// Param [count] load count.
-  Future<void> loadMoreMessage({required String convId}) async {
+  Future<void> loadMoreMessage() async {
     if (_loading) return;
     _loading = true;
     if (!_hasMore) {
@@ -115,7 +117,7 @@ class ChatMessageListController extends ChatBaseController {
 
     ChatCursorResult<ChatMessage> result =
         await ChatClient.getInstance.chatManager.fetchHistoryMessagesByOption(
-          convId,
+      conversation.id,
       ChatConversationType.Chat,
       pageSize: count,
       cursor: cursor,
@@ -123,8 +125,6 @@ class ChatMessageListController extends ChatBaseController {
     );
 
     final list = result.data;
-    // list.sort((a, b) => a.localTime.compareTo(b.localTime));
-    // list.reversed;
     cursor = result.cursor;
 
     /// Loads multiple messages from the local database.
@@ -133,14 +133,11 @@ class ChatMessageListController extends ChatBaseController {
     //   loadCount: count,
     // );
 
-    print("object: ${result.cursor}");
+    log("object: ${result.cursor}");
 
     if (cursor == "undefined") {
       _hasMore = false;
     }
-
-    // print("object length: ${list.length}");
-    // print("object count: $count");
 
     List<ChatMessageListItemModel> models = _modelsCreator(list, _hasMore);
 
@@ -519,7 +516,7 @@ class _ChatMessagesListState extends State<ChatMessagesList>
     widget.messageListViewController.markAllMessagesAsRead();
     widget.messageListViewController
         ._bindingActions(reloadData: _reloadData, onError: _onError);
-    widget.messageListViewController.loadMoreMessage(convId: widget.conversation.id);
+    widget.messageListViewController.loadMoreMessage();
     _scrollController.addListener(scrollListener);
   }
 
@@ -558,7 +555,7 @@ class _ChatMessagesListState extends State<ChatMessagesList>
   void scrollListener() async {
     if (_scrollController.position.maxScrollExtent ==
         _scrollController.offset) {
-      widget.messageListViewController.loadMoreMessage(convId: widget.conversation.id);
+      widget.messageListViewController.loadMoreMessage();
     }
     widget.needDismissInputWidgetAction?.call();
   }
